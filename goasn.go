@@ -6,7 +6,6 @@ import (
 	"compress/gzip"
 	"encoding/gob"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -18,9 +17,8 @@ type ASNInfo struct {
 }
 
 type ASNReference struct {
-	URL     string
-	Data    map[uint64]ASNInfo
-	Offline bool
+	URL  string
+	Data map[uint64]ASNInfo
 }
 
 func NewASN() *ASNReference {
@@ -58,39 +56,84 @@ func (a *ASNReference) getDataURL() (map[uint64]ASNInfo, error) {
 	return result, nil
 }
 
-func (a *ASNReference) Init() {
-	r, _ := a.getDataURL()
+func (a *ASNReference) Init() error {
+
+	if err := a.loadFromDB(); err == nil {
+		return nil
+	}
+
+	if err := a.loadFromOrigin(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *ASNReference) loadFromOrigin() error {
+	r, err := a.getDataURL()
+	if err != nil {
+		return err
+	}
+
 	a.Data = r
 
-	fh, err := os.Create("./goasn.db")
+	fh, err := os.Create("goasn.db")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	defer fh.Close()
 
 	if err := a.dump(fh); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	fh.Close()
+	return nil
+}
+
+func (a *ASNReference) loadFromDB() error {
+	fh, err := os.Open("goasn.db")
+	if err != nil {
+		return err
+	}
+
+	defer fh.Close()
+
+	r, err := a.load(fh)
+	if err != nil {
+		return err
+	}
+
+	a.Data = r
+
+	return nil
 }
 
 func (a *ASNReference) Get(asn uint64) ASNInfo {
 	return a.Data[asn]
 }
 
-func (a *ASNReference) load(r io.Reader) error {
+func (a *ASNReference) load(r io.Reader) (map[uint64]ASNInfo, error) {
+	buf := new(bytes.Buffer)
 	zh, err := gzip.NewReader(r)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_ = zh
+	io.Copy(buf, zh)
 
-	return nil
+	asn := make(map[uint64]ASNInfo)
+	dec := gob.NewDecoder(buf)
+
+	if err = dec.Decode(&asn); err != nil {
+		return nil, err
+	}
+
+	return asn, nil
 }
 
 func (a *ASNReference) dump(w io.Writer) error {
-	var buf = new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 	enc := gob.NewEncoder(buf)
 	if err := enc.Encode(a.Data); err != nil {
 		return err
