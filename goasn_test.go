@@ -24,7 +24,7 @@ func TestGetDataURL(t *testing.T) {
 
 	if asn, ok := res[792]; !ok {
 		t.Error("Expect to have AS792 but not exit")
-	} else if asn.descr != "ORACLE-ASNBLOCK-ASN - Oracle Corporation, US" {
-		t.Errorf("Expect to have AS792 description but it has %s", asn.descr)
+	} else if asn.Descr != "ORACLE-ASNBLOCK-ASN - Oracle Corporation, US" {
+		t.Errorf("Expect to have AS792 description but it has %s", asn.Descr)
 	}
 }
