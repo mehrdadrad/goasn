@@ -110,7 +110,12 @@ func (a *ASNReference) loadFromDB() error {
 }
 
 func (a *ASNReference) Get(asn uint64) ASNInfo {
-	return a.Data[asn]
+	d, ok := a.Data[asn]
+	if !ok {
+		return ASNInfo{Descr: "NA"}
+	}
+
+	return d
 }
 
 func (a *ASNReference) load(r io.Reader) (map[uint64]ASNInfo, error) {
