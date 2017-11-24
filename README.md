@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/mehrdadrad/goasn.svg?branch=master)](https://travis-ci.org/mehrdadrad/goasn)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mehrdadrad/goasn)](https://goreportcard.com/report/github.com/mehrdadrad/goasn)
 # Resolve ASN to description
+It works based on the [bgp.potaroo.net](http://bgp.potaroo.net/) and resolves the AS number to description. It creates a database at your local host and doesn't touch the website for the future resolve's requests. it's fast and safe for goroutine.
 
 # Installation
 
