@@ -58,11 +58,9 @@ func (a *ASNReference) getDataURL() (map[uint64]ASNInfo, error) {
 		}
 	}
 
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
+	err = scanner.Err()
 
-	return result, nil
+	return result, err
 }
 
 // Init loads data from origin or database
@@ -94,11 +92,9 @@ func (a *ASNReference) loadFromOrigin() error {
 
 	defer fh.Close()
 
-	if err := a.dump(fh); err != nil {
-		return err
-	}
+	err = a.dump(fh)
 
-	return nil
+	return err
 }
 
 func (a *ASNReference) loadFromDB() error {
