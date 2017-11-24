@@ -70,11 +70,9 @@ func (a *ASNReference) Init() error {
 		return nil
 	}
 
-	if err := a.loadFromOrigin(); err != nil {
-		return err
-	}
+	err := a.loadFromOrigin()
 
-	return nil
+	return err
 }
 
 func (a *ASNReference) loadFromOrigin() error {
