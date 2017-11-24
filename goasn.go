@@ -8,22 +8,31 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/user"
 	"regexp"
 	"strconv"
 )
 
+// ASNInfo represents ASN description
 type ASNInfo struct {
 	Descr string
 }
 
+// ASNReference represents ASN source and data
 type ASNReference struct {
 	URL  string
+	Path string
 	Data map[uint64]ASNInfo
 }
 
+// NewASN create new ASN instance
 func NewASN() *ASNReference {
+	user, _ := user.Current()
+	path := user.HomeDir
+
 	return &ASNReference{
-		URL: "http://bgp.potaroo.net/cidr/autnums.html",
+		URL:  "http://bgp.potaroo.net/cidr/autnums.html",
+		Path: path + "/.",
 	}
 }
 
@@ -56,6 +65,7 @@ func (a *ASNReference) getDataURL() (map[uint64]ASNInfo, error) {
 	return result, nil
 }
 
+// Init loads data from origin or database
 func (a *ASNReference) Init() error {
 
 	if err := a.loadFromDB(); err == nil {
@@ -77,7 +87,7 @@ func (a *ASNReference) loadFromOrigin() error {
 
 	a.Data = r
 
-	fh, err := os.Create("goasn.db")
+	fh, err := os.Create(a.Path + "goasn.db")
 	if err != nil {
 		return err
 	}
@@ -92,7 +102,7 @@ func (a *ASNReference) loadFromOrigin() error {
 }
 
 func (a *ASNReference) loadFromDB() error {
-	fh, err := os.Open("goasn.db")
+	fh, err := os.Open(a.Path + "goasn.db")
 	if err != nil {
 		return err
 	}
@@ -109,6 +119,7 @@ func (a *ASNReference) loadFromDB() error {
 	return nil
 }
 
+// Get returns ASN description
 func (a *ASNReference) Get(asn uint64) ASNInfo {
 	d, ok := a.Data[asn]
 	if !ok {
