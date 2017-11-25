@@ -35,7 +35,7 @@ func TestGetDataURL(t *testing.T) {
 
 func TestLoad(t *testing.T) {
 	asn := NewASN()
-	data := map[uint64]ASNInfo{15133: ASNInfo{Descr: "EdgeCast"}}
+	data := map[uint64]ASNInfo{15133: {Descr: "EdgeCast"}}
 
 	buf := new(bytes.Buffer)
 	enc := gob.NewEncoder(buf)
@@ -63,7 +63,7 @@ func TestLoad(t *testing.T) {
 
 func TestDump(t *testing.T) {
 	asn := NewASN()
-	asn.Data = map[uint64]ASNInfo{15133: ASNInfo{Descr: "EdgeCast"}}
+	asn.Data = map[uint64]ASNInfo{15133: {Descr: "EdgeCast"}}
 	gzipData := []byte{0x1f, 0x8b, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xff, 0xe2, 0xff,
 		0xdf, 0xcc, 0xc2, 0xc8, 0xf4, 0xbf, 0x85, 0x81, 0x91, 0x8d, 0xf1,
 		0x7f, 0x13, 0x3, 0x83, 0xd8, 0xff, 0x46, 0x66, 0x46, 0xa6, 0xff,
