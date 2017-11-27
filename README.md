@@ -6,26 +6,26 @@ It works based on the [bgp.potaroo.net](http://bgp.potaroo.net/) and resolves th
 # Installation
 
      go get github.com/mehrdadrad/goasn
-     
+
 # Usage
 ```
   package main
-  
+
   import (
       "github.com/mehrdadrad/goasn"
   )
-  
+
   func main() {
       asn := goasn.NewASN()
       asn.Init()
-  
-      a := asn.Get(15133)
-  
-      println(a.Descr)
+
+      if err, a := asn.Get(15133); err != nil {
+        println(a.Descr)
+      }
   }
 ```
 ```
->go run main.go 
+>go run main.go
 >EDGECAST - MCI Communications Services, Inc. d/b/a Verizon Business, US
  ```
 ## License
