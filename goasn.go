@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/gob"
+	"errors"
 	"io"
 	"net/http"
 	"os"
@@ -114,13 +115,13 @@ func (a *ASNReference) loadFromDB() error {
 }
 
 // Get returns ASN description
-func (a *ASNReference) Get(asn uint64) ASNInfo {
+func (a *ASNReference) Get(asn uint64) (error, ASNInfo) {
 	d, ok := a.Data[asn]
 	if !ok {
-		return ASNInfo{Descr: "NA"}
+		return errors.New("ASN not found"), ASNInfo{}
 	}
 
-	return d
+	return nil, d
 }
 
 func (a *ASNReference) load(r io.Reader) (map[uint64]ASNInfo, error) {
