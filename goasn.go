@@ -115,13 +115,13 @@ func (a *ASNReference) loadFromDB() error {
 }
 
 // Get returns ASN description
-func (a *ASNReference) Get(asn uint64) (error, ASNInfo) {
+func (a *ASNReference) Get(asn uint64) (ASNInfo, error) {
 	d, ok := a.Data[asn]
 	if !ok {
-		return errors.New("ASN not found"), ASNInfo{}
+		return ASNInfo{}, errors.New("ASN not found")
 	}
 
-	return nil, d
+	return d, nil
 }
 
 func (a *ASNReference) load(r io.Reader) (map[uint64]ASNInfo, error) {

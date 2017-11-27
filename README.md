@@ -19,7 +19,7 @@ It works based on the [bgp.potaroo.net](http://bgp.potaroo.net/) and resolves th
       asn := goasn.NewASN()
       asn.Init()
 
-      if err, a := asn.Get(15133); err == nil {
+      if a, err := asn.Get(15133); err == nil {
         println(a.Descr)
       }
   }
